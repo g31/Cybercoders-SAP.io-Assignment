@@ -1,27 +1,13 @@
-function maxConflictsFunc(events, zones){
-	var i, j;
-	for(i = 0; i < events.length; i++){
-		events[i].maxConflicts = 0;
-	}
-	for(i = 0; i < events.length; i++){
-		for(j = 0; j<zones.length; j++){
-			if(events[i].start <= zones[j].zoneStart && events[i].end >= zones[j].zoneEnd){
-					events[i].maxConflicts = Math.max(events[i].maxConflicts, zones[j].zoneEvents.length);
-			} 	
-		}
-	}
-	return events;		
-}
-
 function createZoneTable(events){
+	//function to divide events into zones based on start and end times and finds which events fall in each zone
 	var i;
 	var zones = [], tempArray = [];
-	var tempSet = new Set(); //allows only unique values, so duplicates r ignored
+	var tempSet = new Set(); //allow only unique values
 	for(i =0; i < events.length; i++){
 		tempSet.add(events[i].start);
 		tempSet.add(events[i].end);
 	}
-	tempArray = [...tempSet]; //convert set to array for sorting
+	tempArray = [...tempSet]; //convert set to array for sorting using spread
 
 	tempArray.sort(function(a, b) {
   		return a - b;
@@ -46,7 +32,25 @@ function createZoneTable(events){
 	return zones;
 }
 
+function maxConflictsFunc(events, zones){
+	// this functions adds a property called 'maxConflict' into each element of the events array
+	// 'maxConflict' helps in calculation of 'width' of each event on the calendar 
+	var i, j;
+	for(i = 0; i < events.length; i++){
+		events[i].maxConflicts = 0;
+	}
+	for(i = 0; i < events.length; i++){
+		for(j = 0; j<zones.length; j++){
+			if(events[i].start <= zones[j].zoneStart && events[i].end >= zones[j].zoneEnd){
+					events[i].maxConflicts = Math.max(events[i].maxConflicts, zones[j].zoneEvents.length);
+			} 	
+		}
+	}
+	return events; //return updated events array		
+}
+
 function createConflictTable(events){
+	//function to create a log of all events that conflict with a particular(current) event
 	var i, j;
 	var conflictTable = new Array(events.length);
 	for(i =0; i<events.length; i++){
@@ -62,6 +66,8 @@ function createConflictTable(events){
 }
 
 function calculateOffset(events, conflictTable){
+	// this functions adds a property called 'offset' into each element of the events array
+	// 'offset' helps in calculation of 'margin-left' of each event on the calendar
 	var i,j;
 	for(i = 0; i < events.length; i++){
 		events[i].offset = 0;
@@ -79,7 +85,7 @@ function calculateOffset(events, conflictTable){
 			}
 		}
 	}
-	return events;
+	return events; //return updated events array
 }
 
 function layOutDay(events){
@@ -98,10 +104,10 @@ function layOutDay(events){
 
 		//if events are not passed in increasing order of start time, then sort them first
 		events.sort(function(a,b) {return (a.start > b.start) ? 1 : ((b.start > a.start) ? -1 : 0);});
-		var zones = createZoneTable(events);
-		events = maxConflictsFunc(events, zones);
-		var conflictTable = createConflictTable(events);
-		events = calculateOffset(events, conflictTable);
+		var zones = createZoneTable(events); //divide events into zones based on start and end times
+		events = maxConflictsFunc(events, zones); // add a property called 'maxConflict' into each element of the events array to calculate 'width'
+		var conflictTable = createConflictTable(events); //create a log of conflicting events
+		events = calculateOffset(events, conflictTable); // add a property called 'offset' into each elements of the events array to calculate 'margin-left'
 
 		for(i = 0; i<events.length; i++){
 			height = (events[i].end - events[i].start) - 5; //subtract 5 to adjust the 5px padding on top
