@@ -1,0 +1,33 @@
+/* Styling */
+.alignDivs{
+	float: left;
+}
+
+.timeRange{
+	margin-left: 400px;
+	width: 100px; 
+	height: 720px;
+	text-align: right;
+	font-weight: bold; 
+}
+
+.hourDivs{
+	height:30px;
+}
+
+.small{
+	font-size: small;
+	color: #cccccc;
+}
+
+.calendarView{
+	display: block;
+	margin-left: 10px;
+	margin-top: 5px;
+	height:720px;
+	width: 600px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #f2f2f2;
+	border-left: 1px solid #cccccc;
+}
